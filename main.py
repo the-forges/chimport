@@ -1,7 +1,9 @@
 import argparse
 import os
 from os import path
+from pathlib import Path
 import csv
+import time
 from pyisemail import is_email
 import pandas as pd
 
@@ -24,18 +26,21 @@ def valid(row, diagnose=False):
         return False
     return True
 
-parser = argparse.ArgumentParser(description='chimport takes an excel spread sheet, normalizes the data, and uploads it to mail chimp')
-parser.add_argument('fileimport')
-parser.add_argument('--errors', required=False)
-parser.add_argument('--export', required=False)
+parser = argparse.ArgumentParser(description='chimport takes an excel spread sheet, normalizes the data, and makes it uploadable to mail chimp')
+parser.add_argument('-fileimport')
+parser.add_argument('-exportpath')
+parser.add_argument('-errorspath')
 args = parser.parse_args()
 
 if path.exists(args.fileimport) == False:
     print('Whoopsies! We could not find the file you provided: {}'.format(args.fileimport))
     exit(0)
 
-data = list()
+timestamp = time.strftime("%a%b%Y%I%p")
+exportfile = path.join(args.exportpath, "{}_export-{}.csv".format(Path(args.fileimport).stem, timestamp))
+errorsfile = path.join(args.errorspath, "{}_errors-{}.csv".format(Path(args.fileimport).stem, timestamp))
 
+data = list()
 headers = list()
 
 with open(args.fileimport) as csvfile:
@@ -58,7 +63,6 @@ ed = pd.DataFrame(errordata)
 vd = vd.drop(dropfields, axis=1)
 ed = ed.drop(dropfields, axis=1)
 
-vdcsv = vd.to_csv(index=False)
-edcsv = vd.to_csv(index=False)
+vdcsv = vd.to_csv(path_or_buf=exportfile, index=False)
+edcsv = ed.to_csv(path_or_buf=errorsfile, index=False)
 
-print(vdcsv, edcsv)
