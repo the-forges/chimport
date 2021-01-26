@@ -10,9 +10,9 @@
             "request": "launch",
             "program": "${file}",
             "args": [
-                "-exportpath","/home/abichristenson/projects/chimport",
-                "-errorspath","/home/abichristenson/projects/chimport",
-                "-fileimport","/home/abichristenson/projects/chimport/fixtures/shopify_export.csv"
+                "-exportpath","${workspaceFolder}",
+                "-errorspath","${workspaceFolder}",
+                "-fileimport","${workspaceFolder}/fixtures/shopify_export.csv"
                     ],
             "console": "integratedTerminal"
         }
